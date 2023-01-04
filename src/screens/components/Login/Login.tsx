@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Button from '../../../../components/Button'
 import Input from '../../../../components/Input'
 import ModalFormRegister from '../../../../components/ModalFormRegister'
 import Title from '../../../../components/Title'
+
+import { getUsers } from '../../../../service/getUsers/getUsers'
 import {
   ContainerLoginStyled,
   ContentBodyStyled,
@@ -30,6 +32,7 @@ export const Login = (): JSX.Element => {
         <ContainerButtonStyle>
           <Button children="Acessar" />
         </ContainerButtonStyle>
+
         <p>
           Ainda não possui conta,{' '}
           <a
