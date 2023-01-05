@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { ChangeEvent, useCallback, useEffect, useState } from 'react'
 
 import {
   ContainerModalStyle,
@@ -11,7 +11,6 @@ import {
 import Modal from 'react-modal'
 import Button from '../Button'
 import Input from '../Input'
-import axios from 'axios'
 
 type PropsTitle = {
   open: boolean
@@ -29,7 +28,6 @@ const customStyles = {
     transform: 'translate(-50%, -50%)',
     padding: 'none',
     background: '#09046a',
-    // paddingTop: '20px',
   },
 }
 
@@ -38,36 +36,53 @@ export const ModalFormRegister = ({
   closeModal,
   title,
 }: PropsTitle): JSX.Element => {
-  const [name, setName] = useState()
-  const [email, setEmail] = useState()
-  const [password, setPassword] = useState()
+  const [nameInput, setNameInput] = useState<string>('')
+  const [email, setEmail] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
 
-  const onChangeHandler = (e: any) => {
-    setName(e.target.value)
-    setEmail(e.target.value)
-    setPassword(e.target.value)
-  }
+  useEffect(() => {
+    setNameInput('')
+    setEmail('')
+    setPassword('')
+  }, [])
+
+  const onChangeName = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setNameInput(event.target.value)
+    },
+    [nameInput]
+  )
+
+  const onChangeEmail = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setEmail(event.target.value)
+    },
+    [email]
+  )
+
+  const onChangePassword = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setPassword(event.target.value)
+    },
+    [password]
+  )
 
   const handleSubmit = async (e: any) => {
     e.preventDefault()
 
     const data = JSON.stringify({
-      name: 'name',
-      email: 'email@gmail.com',
-      password: 'password',
+      name: nameInput,
+      email: email,
+      password: password,
     })
 
     const requestOptions: RequestInit = {
       method: 'POST',
-      // mode: 'no-cors',
-      // headers: {
-      //   'Content-Type': 'application/json',
-      //   'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE',
-      // },
+      mode: 'no-cors',
       body: data,
     }
 
-    const url = 'http://localhost:8000/api/v1/user/add'
+    const url = 'http://localhost:8000/api/v1/user/auth/signup'
 
     fetch(url, requestOptions)
       .then(response => console.log('response', response))
@@ -85,23 +100,25 @@ export const ModalFormRegister = ({
             <LabelStyle>Dados do Usuário</LabelStyle>
             <ContentInputsStyle>
               <Input
-                onChange={onChangeHandler}
-                value={name}
+                onChangeInput={onChangeName}
+                value={nameInput}
                 name="name"
+                type="name"
                 placeholder="Nome completo"
               />
               <Input
-                onChange={onChangeHandler}
+                onChangeInput={onChangeEmail}
                 value={email}
+                type="email"
                 name="email"
                 placeholder="Email"
               />
               <Input
-                onChange={onChangeHandler}
+                onChangeInput={onChangePassword}
                 value={password}
                 name="password"
                 type="password"
-                placeholder="Password"
+                placeholder="Senha"
               />
             </ContentInputsStyle>
           </ContentLabelStyle>

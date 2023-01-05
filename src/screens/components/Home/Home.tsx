@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
 import Button from '../../../../components/Button'
 import Title from '../../../../components/Title'
 import ModalForm from './components/ModalForm'
@@ -56,6 +57,8 @@ export const Home = (): JSX.Element => {
   const [openModal, setOpenModal] = useState(false)
   const [openModalEdit, setOpenModalEdit] = useState(false)
 
+  const [registersData, setRegistersData] = useState([])
+
   function handleOpenModal() {
     setOpenModal(true)
   }
@@ -68,6 +71,27 @@ export const Home = (): JSX.Element => {
   function handleOpenEditModal() {
     setOpenModalEdit(true)
   }
+
+  const requestOptions: RequestInit = {
+    method: 'GET',
+    mode: 'no-cors',
+    // headers: {
+    //   'Content-Type': 'application/text',
+    // },
+  }
+
+  useEffect(() => {
+    fetch(`http://localhost:8000/api/v1/owner/all`, requestOptions)
+      // .then(result => console.log(result))
+      .then(response => response.json())
+
+    // .then(data => {
+    //   setRegistersData(data.results)
+    //   // console.log(data.results)
+    // })
+  }, [])
+
+  console.log('dados', registersData)
 
   return (
     <>
@@ -91,27 +115,29 @@ export const Home = (): JSX.Element => {
             </tr>
           </thead>
           <tbody>
-            {carros.map(item => (
-              <tr key={item.id}>
-                <td>{item.id}</td>
-                <td>{item.nameOwner}</td>
+            {registersData.map(item => {
+              return (
+                <tr>
+                  <td>{item.name}</td>
+                  {/* <td>{item.nameOwner}</td>
                 <td>{item.phone}</td>
                 <td>{item.plate}</td>
-                <td>{item.model}</td>
-                <td>{item.date}</td>
-                <td>{item.arrival}</td>
-                <td>{item.exit}</td>
-                <td>
-                  <a
-                    onClick={handleOpenEditModal}
-                    style={{ marginRight: '10px', cursor: 'pointer' }}
-                  >
-                    editar
-                  </a>
-                  <a href="">deletar</a>
-                </td>
-              </tr>
-            ))}
+                <td>{item.model}</td> */}
+                  {/* <td>{item.date}</td> */}
+                  {/* <td>{item.entry_time}</td> */}
+                  {/* <td>{item.departure_time}</td> */}
+                  <td>
+                    <a
+                      onClick={handleOpenEditModal}
+                      style={{ marginRight: '10px', cursor: 'pointer' }}
+                    >
+                      editar
+                    </a>
+                    <a href="">deletar</a>
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </TableCarsStyle>
       </ContainerTableBodyStyle>

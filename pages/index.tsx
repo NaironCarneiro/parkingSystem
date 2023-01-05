@@ -15,8 +15,8 @@ const HomePage: React.FC = () => {
         <title>Parking Car</title>
       </Head>
 
-      <Login />
-      {/* <Home /> */}
+      {/* <Login /> */}
+      <Home />
     </Container>
   )
 }

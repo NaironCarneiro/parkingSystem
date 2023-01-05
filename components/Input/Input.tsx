@@ -1,12 +1,14 @@
-import React, { forwardRef } from 'react'
+import React, { ChangeEvent, forwardRef } from 'react'
 import { InputStyled, ContainerStyled } from './styled'
 
 type PropsInput = React.InputHTMLAttributes<HTMLInputElement> & {
   width?: string
-  value?: string
+  value?: string | Date
   height?: string
   placeholder?: string
   type?: string
+  onChangeInput?: (event: ChangeEvent<HTMLInputElement>) => void
+  name?: string
 }
 
 /**
@@ -20,7 +22,15 @@ type PropsInput = React.InputHTMLAttributes<HTMLInputElement> & {
 
 export const Input = forwardRef<HTMLInputElement, PropsInput>(
   (
-    { width = '300px', value, height = '40px', placeholder, type = 'text' },
+    {
+      width = '300px',
+      value,
+      height = '40px',
+      placeholder,
+      type = 'text',
+      onChangeInput,
+      name,
+    },
     ref
   ): JSX.Element => {
     return (
@@ -30,6 +40,8 @@ export const Input = forwardRef<HTMLInputElement, PropsInput>(
           placeholder={placeholder}
           value={value}
           type={type}
+          onChange={onChangeInput}
+          name={name}
         />
       </ContainerStyled>
     )
