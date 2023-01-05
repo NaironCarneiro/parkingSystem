@@ -151,17 +151,29 @@ export const ModalForm = ({
     const urlCar = 'http://localhost:8000/api/v1/car/add'
     const urlRegister = 'http://localhost:8000/api/v1/register/add'
 
-    fetch(urlOwner, requestOptionsOwner)
+    const responseOwner = fetch(urlOwner, requestOptionsOwner)
       .then(response => console.log('response', response))
       .catch(error => console.log(error))
 
-    fetch(urlCar, requestOptionsCar)
-      .then(response => console.log('response', response))
-      .catch(error => console.log(error))
+    if (!responseOwner) {
+      console.log('Algo deu errado')
+    } else {
+      const responseCar = fetch(urlCar, requestOptionsCar)
+        .then(response => console.log('response', response))
+        .catch(error => console.log(error))
 
-    fetch(urlRegister, requestOptionsRegister)
-      .then(response => console.log('response', response))
-      .catch(error => console.log(error))
+      if (!responseCar) {
+        console.log('algo de errado deu')
+      } else {
+        fetch(urlRegister, requestOptionsRegister)
+          .then(response => console.log('response', response))
+          .catch(error => console.log(error))
+      }
+    }
+
+    // const responseRegister = fetch(urlRegister, requestOptionsRegister)
+    //   .then(response => console.log('response', response))
+    //   .catch(error => console.log(error))
   }
 
   return (

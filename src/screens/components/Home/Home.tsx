@@ -57,7 +57,9 @@ export const Home = (): JSX.Element => {
   const [openModal, setOpenModal] = useState(false)
   const [openModalEdit, setOpenModalEdit] = useState(false)
 
-  const [registersData, setRegistersData] = useState([])
+  const [ownerData, setOwnerData] = useState([])
+  const [carData, setCarData] = useState([])
+  const [registerData, setRegisterData] = useState([])
 
   function handleOpenModal() {
     setOpenModal(true)
@@ -72,26 +74,42 @@ export const Home = (): JSX.Element => {
     setOpenModalEdit(true)
   }
 
-  const requestOptions: RequestInit = {
-    method: 'GET',
-    mode: 'no-cors',
-    // headers: {
-    //   'Content-Type': 'application/text',
-    // },
-  }
-
   useEffect(() => {
-    fetch(`http://localhost:8000/api/v1/owner/all`, requestOptions)
-      // .then(result => console.log(result))
-      .then(response => response.json())
+    // fetch(`http://localhost:8000/api/v1/owner/all`)
+    //   .then(response => response.json())
+    //   .then(result => {
+    //     setOwnerData(result.data)
+    //   })
 
-    // .then(data => {
-    //   setRegistersData(data.results)
-    //   // console.log(data.results)
-    // })
+    // fetch(`http://localhost:8000/api/v1/car/all`)
+    //   .then(response => response.json())
+    //   .then(result => {
+    //     setCarData(result.data)
+    //   })
+
+    fetch(`http://localhost:8000/api/v1/register/all`)
+      .then(response => response.json())
+      .then(result => {
+        setRegisterData(result.data)
+      })
   }, [])
 
-  console.log('dados', registersData)
+  const handleDelete = (id: number) => {
+    const url = `http://localhost:8000/api/v1/car/delete/${id}`
+
+    console.log(id)
+
+    // fetch(url, {
+    //   method: 'DELETE',
+    //   mode: 'no-cors',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Accept: 'application/json',
+    //   },
+    // }).then(response => {
+    //   console.log(response.status)
+    // })
+  }
 
   return (
     <>
@@ -100,7 +118,6 @@ export const Home = (): JSX.Element => {
       </ContainerTitleStyle>
       <ContainerTableBodyStyle>
         <TableCarsStyle>
-          {/* <caption>CARROS CADASTRADOS</caption> */}
           <thead>
             <tr>
               <th>ID</th>
@@ -115,25 +132,39 @@ export const Home = (): JSX.Element => {
             </tr>
           </thead>
           <tbody>
-            {registersData.map(item => {
+            {registerData?.map(item => {
               return (
                 <tr>
-                  <td>{item.name}</td>
-                  {/* <td>{item.nameOwner}</td>
-                <td>{item.phone}</td>
-                <td>{item.plate}</td>
-                <td>{item.model}</td> */}
-                  {/* <td>{item.date}</td> */}
-                  {/* <td>{item.entry_time}</td> */}
-                  {/* <td>{item.departure_time}</td> */}
+                  <td>{item.register_id}</td>
+                  <td>{item.owner_name}</td>
+                  <td>{item.telephone}</td>
+                  <td>{item.license_plate}</td>
+                  <td>{item.brand_model}</td>
+                  <td>{item.date}</td>
+                  <td>{item.entry_time}</td>
+                  <td>{item.departure_time}</td>
                   <td>
                     <a
                       onClick={handleOpenEditModal}
-                      style={{ marginRight: '10px', cursor: 'pointer' }}
+                      style={{
+                        marginRight: '10px',
+                        cursor: 'pointer',
+                        color: 'blue',
+                      }}
                     >
-                      editar
+                      Editar
                     </a>
-                    <a href="">deletar</a>
+                    <a
+                      onClick={() => handleDelete(item.id)}
+                      style={{
+                        textDecoration: 'none',
+                        marginRight: '10px',
+                        cursor: 'pointer',
+                        color: '#990000',
+                      }}
+                    >
+                      Deletar
+                    </a>
                   </td>
                 </tr>
               )
