@@ -11,11 +11,13 @@ import {
 import Modal from 'react-modal'
 import Input from '../../../../../../components/Input'
 import moment from 'moment'
+// import moment from 'moment'
 
 type PropsTitle = {
   open: boolean
   closeModal: (event: MouseEvent) => void
   title: string
+  id: number
 }
 
 const customStyles = {
@@ -28,32 +30,58 @@ const customStyles = {
     transform: 'translate(-50%, -50%)',
     padding: 'none',
     background: '#09046a',
-    // paddingTop: '20px',
   },
 }
 
-export const ModalForm = ({
+export const ModalFormEdit = ({
   open,
   closeModal,
   title,
+  id,
 }: PropsTitle): JSX.Element => {
-  const [nameOwner, setNameOwner] = useState<string>('')
-  const [phone, setPhone] = useState<string>('')
-  const [brand_model, setBrand_model] = useState<string>('')
-  const [licensePlate, setLicensePlate] = useState<string>('')
-  const [date, setDate] = useState(moment().format('DD-MM-YYYY'))
-  const [entryTime, setEntryTime] = useState<string>('00:00:00')
-  const [departureTime, setDepartureTime] = useState<string>('00:00:00')
+  const [updateData, setUpdateData] = useState([])
 
   useEffect(() => {
-    setNameOwner('')
-    setPhone('')
-    setBrand_model('')
-    setLicensePlate('')
-    setDate(moment().format('DD-MM-YYYY'))
-    setEntryTime('00:00:00')
-    setDepartureTime('00:00:00')
-  }, [])
+    fetch(`http://localhost:8000/api/v1/register/${id}`)
+      .then(response => response.json())
+      .then(result => {
+        setUpdateData(result.data)
+      })
+  }, [id])
+
+  console.log(updateData?.owner_name)
+
+  const [nameOwner, setNameOwner] = useState<string>(updateData?.owner_name)
+  const [phone, setPhone] = useState<string>(updateData?.telephone)
+  const [brand_model, setBrand_model] = useState<string>(
+    updateData?.brand_model
+  )
+  const [licensePlate, setLicensePlate] = useState<string>(
+    updateData?.license_plate
+  )
+  const [date, setDate] = useState(moment().format(updateData?.date))
+  const [entryTime, setEntryTime] = useState<string>(updateData?.entry_time)
+  const [departureTime, setDepartureTime] = useState<string>(
+    updateData?.departure_time
+  )
+
+  useEffect(() => {
+    setNameOwner(updateData?.owner_name)
+    setPhone(updateData?.telephone)
+    setBrand_model(updateData?.brand_model)
+    setLicensePlate(updateData?.license_plate)
+    setDate(moment().format(updateData?.date))
+    setEntryTime(updateData?.entry_time)
+    setDepartureTime(updateData?.departure_time)
+  }, [
+    updateData?.owner_name,
+    updateData?.telephone,
+    updateData?.brand_model,
+    updateData?.license_plate,
+    updateData?.date,
+    updateData?.entry_time,
+    updateData?.departure_time,
+  ])
 
   const onChangeNameOwner = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -94,7 +122,6 @@ export const ModalForm = ({
   const onChangeEntryTime = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       setEntryTime(event.target.value)
-      console.log(entryTime)
     },
     [entryTime]
   )
@@ -108,7 +135,6 @@ export const ModalForm = ({
 
   const handleSubmitData = async (e: any) => {
     e.preventDefault()
-
     const dataOwner = JSON.stringify({
       name: nameOwner,
       telephone: phone,
@@ -117,7 +143,7 @@ export const ModalForm = ({
     const dataCar = JSON.stringify({
       brand_model: brand_model,
       license_plate: licensePlate,
-      tbl_owner_id: 1,
+      tbl_owner_id: updateData?.tbl_owner_id,
     })
 
     const dataRegister = JSON.stringify({
@@ -125,31 +151,41 @@ export const ModalForm = ({
       entry_time: entryTime,
       departure_time: departureTime,
       tbl_user_id: 1,
-      tbl_car_id: 1,
-      tbl_car_tbl_owner_id: 1,
+      tbl_car_id: updateData?.tbl_car_id,
+      tbl_car_tbl_owner_id: updateData?.tbl_owner_id,
     })
 
     const requestOptionsOwner: RequestInit = {
-      method: 'POST',
-      mode: 'no-cors',
+      method: 'PUT',
+      // mode: 'no-cors',
+      // headers: {
+      //   'Content-type': 'application/json',
+      // },
       body: dataOwner,
     }
 
     const requestOptionsCar: RequestInit = {
-      method: 'POST',
-      mode: 'no-cors',
+      method: 'PUT',
+      // mode: 'no-cors',
+      // headers: {
+      //   'Content-type': 'application/json',
+      // },
       body: dataCar,
     }
 
     const requestOptionsRegister: RequestInit = {
-      method: 'POST',
-      mode: 'no-cors',
+      method: 'PUT',
+      // mode: 'no-cors',
+      // headers: {
+      //   'Content-type': 'application/json',
+      //   'Access-Control-Allow-Origin': 'PUT',
+      // },
       body: dataRegister,
     }
 
-    const urlOwner = 'http://localhost:8000/api/v1/owner/add'
-    const urlCar = 'http://localhost:8000/api/v1/car/add'
-    const urlRegister = 'http://localhost:8000/api/v1/register/add'
+    const urlOwner = `http://localhost:8000/api/v1/owner/update/${updateData?.tbl_car_id}`
+    const urlCar = `http://localhost:8000/api/v1/car/update/${updateData?.tbl_car_id}`
+    const urlRegister = `http://localhost:8000/api/v1/register/update/${id}`
 
     fetch(urlOwner, requestOptionsOwner)
       .then(response => console.log('response', response))
@@ -252,7 +288,7 @@ export const ModalForm = ({
               background="#09046a"
               color="#fff"
               backgroundHover="#0e06b0"
-              children="Cadastrar veiculo"
+              children="Atualizar"
               type="submit"
             />
             <Button

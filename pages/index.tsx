@@ -6,8 +6,6 @@ import { Container } from '../styles/pages/Home'
 import Login from '../src/screens/components/Login'
 import Home from '../src/screens/components/Home'
 
-// const inter = Inter({ subsets: ['latin'] })
-
 const HomePage: React.FC = () => {
   return (
     <Container>
